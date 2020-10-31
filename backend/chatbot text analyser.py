@@ -1,6 +1,10 @@
+import nltk
 from nltk.corpus import stopwords
 from pymystem3 import Mystem
 from string import punctuation
+from string import digits
+from nltk.probability import FreqDist
+import io
 
 import pandas as pd
 import numpy as np
@@ -9,6 +13,8 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
+nltk.download('punkt')
+nltk.download('stopwords')
 rus_stopwords = stopwords.words("russian")
 rus_stopwords.remove("не")
 
@@ -27,32 +33,53 @@ def _lemmatize(request: str, testing = False):
     Change words in the request to their lemmas (normal form).
     """
     no = False
+    digpunc = False # digits or punc
     m = Mystem()
     tokens = []
+    punc = punctuation
+    punc += "№—«»"
 
-    request.replace("\n", "")
-    lemmas = m.lemmatize(text=request.lower())
+    request = request.replace("\ufeff", "").strip()
+
+    nltk_tokens = nltk.tokenize.word_tokenize(request.lower())
+    token_string = " ".join(nltk_tokens)
+    lemmas = m.lemmatize(token_string)
 
     for lemma in lemmas:
-        if lemma not in rus_stopwords and lemma != " " and lemma.strip() not in punctuation:
-            if lemma == 'не':
-                no = True
+        if lemma.__len__() > 1:
+            if lemma.__contains__(" "):
+                splits = lemma.rsplit(" ")
+                for split in splits:
+                    if lemma != "":
+                        lemmas.append(split)
                 continue
-            if no:
-                tokens.append("не" + lemma)
-                no = False
-            else:
-                tokens.append(lemma)
+            if lemma not in rus_stopwords and lemma != '' and lemma != ' ':
+                for letter in lemma:
+                    if letter in digits or letter in punc:
+                        digpunc = True
+                        break
+                if digpunc:
+                    digpunc = False
+                    continue
+                if lemma == 'не':
+                    no = True
+                    continue
+                if no:
+                    tokens.append("не" + lemma)
+                    no = False
+                else:
+                    tokens.append(lemma)
 
     formatted_request = " ".join(tokens)
     if testing:
         print(request.strip())
         print(tokens)
         print(formatted_request, '\n')
+
     return formatted_request
 
 
-def _train(train_set: str, groups: list, testing: bool = False):
+def _train(train_set: list, groups: list, testing: bool = False):
     """
     Train the bot to analyse user's message (bot will return a list of suitable problems in response).
     """
@@ -65,9 +92,9 @@ def _train(train_set: str, groups: list, testing: bool = False):
         X_train, y_train = X, y
 
     model = Pipeline([
-        (CountVectorizer(ngram_range=(1, 2))),
-        (TfidfTransformer()),
-        (MultinomialNB())
+        (CountVectorizer(ngram_range=(1, 2))),  # count words
+        (TfidfTransformer()),   # evaluate weights for words
+        (MultinomialNB())   # one of the best models to predict classes (works better with integer but can Tf-Idf)
     ])
 
     model = model.fit(X_train, y_train)
@@ -83,10 +110,32 @@ if __name__ == "__main__":
     #     np.array([["",""], ["",""], ["",""]),
     #     columns=['requests', 'types'])
     # train_set = ""
-    # model = _train(train_set)
+    # model = _train(train_set, groups)
 
-    with open("samples.txt") as file:
-        samples = file.readlines()
-        for sample in samples:
-            analyser(sample, model=None)
+    # with open("samples.txt") as file:
+    #     samples = file.readlines()
+    #     for sample in samples:
+    #         analyser(sample, model=None)
 
+    file_path = "extract from registry_A"
+
+    try:
+        with open(file_path+"_string.txt") as file:
+            big_string = file.read()
+    except FileNotFoundError:
+        data = []
+        with open(file_path+".txt", encoding="utf-8") as file:
+            samples = file.read()
+            f_string = (_lemmatize(samples, testing=False))
+            data.append(f_string)
+
+        big_string = " ".join(data)
+        f = open(file_path+"_string.txt", 'w')
+        f.write(big_string)
+        f.close()
+
+    token_string = nltk.tokenize.word_tokenize(big_string)
+
+    fdist = FreqDist(token_string)
+    print(fdist.most_common(30))
+    fdist.plot(30, cumulative=False)
