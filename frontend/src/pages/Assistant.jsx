@@ -1,6 +1,22 @@
 import React from 'react';
 import { Container } from 'react-bootstrap';
+import axios from 'axios';
 function Assistant() {
+    function sendFile() {
+        var formData = new FormData();
+            var imagefile = document.querySelector('#file');
+            formData.append("file", imagefile.files[0]);
+
+            axios.post('http://localhost:5000/api/v1/file_upload', formData, {
+                headers: {
+                'Content-Type': 'multipart/form-data'
+                }
+            }).then(response => {
+                console.log(response)
+            }).catch(err => {
+                console.log(err)
+            })
+    }
   return (
     <Container>
 
@@ -14,7 +30,10 @@ function Assistant() {
             </div>
         <div className="msg-text">
                <textarea rows="5"/>
-               <i class="fas fa-paperclip"></i>
+               <i class="fas fa-paperclip">
+               
+               </i>
+               <form enctype="multipart/form-data" onChange={sendFile}><input type="file" id="file" name="file"/></form>
         </div>
             {/* <div className="msg-container">
                 <img src="/w3images/bandmember.jpg" alt="Avatar"/>
