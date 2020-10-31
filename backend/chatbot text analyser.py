@@ -15,12 +15,12 @@ from sklearn.pipeline import Pipeline
 
 
 def analyser(request: str, model: Pipeline):
-    formatted_request = _lemmatize(request)
-    prediction = model.predict(formatted_request)
-    return prediction
+    formatted_request = _lemmatize(request, testing=False)
+    #prediction = model.predict(formatted_request)
+    #return prediction
 
 
-def _lemmatize(request: str):
+def _lemmatize(request: str, testing = False):
     no = False
     m = Mystem()
     tokens = []
@@ -40,13 +40,14 @@ def _lemmatize(request: str):
                 tokens.append(lemma)
 
     formatted_request = " ".join(tokens)
-    # print(request.strip())
-    # print(tokens)
-    # print(formatted_request, '\n')
+    if testing:
+        print(request.strip())
+        print(tokens)
+        print(formatted_request, '\n')
     return formatted_request
 
 
-def _train(train_set: str, groups: list[str], testing: bool = False):
+def _train(train_set: str, groups: list, testing: bool = False):
 
     X = train_set
     y = groups
@@ -63,7 +64,6 @@ def _train(train_set: str, groups: list[str], testing: bool = False):
     ])
 
     model = model.fit(X_train, y_train)
-
     if testing:
         predictions = model.predict(X_test)
         print('Model score:', model.score(X_test, y_test))
@@ -78,5 +78,5 @@ if __name__ == "__main__":
     with open("samples.txt") as file:
         samples = file.readlines()
         for sample in samples:
-            analyser(sample)
+            analyser(sample, model=None)
 
