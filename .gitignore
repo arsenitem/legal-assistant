@@ -23,6 +23,6 @@ yarn-debug.log*
 yarn-error.log*
 
 
-uploads/
-files/
+uploads/*
+files/*
 __pycache__/
