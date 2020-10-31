@@ -1,12 +1,18 @@
-import React from 'react';
-import { Container } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Col, Container, Row } from 'react-bootstrap';
 import axios from 'axios';
-function Assistant() {
+import MessageItem from '../components/MessageItem';
+import { connect } from 'react-redux';
+import addMessage from '../data/chat-reducer'
+function Assistant(props) {
+    let [fileName, setFileName] = useState("")
+
+    let [msgText, setMsgText] = useState("")
     function sendFile() {
         var formData = new FormData();
-            var imagefile = document.querySelector('#file');
-            formData.append("file", imagefile.files[0]);
-
+            var file = document.querySelector('#file');
+            formData.append("file", file.files[0]);
+            setFileName(file.files[0].name);
             axios.post('http://localhost:5000/api/v1/file_upload', formData, {
                 headers: {
                 'Content-Type': 'multipart/form-data'
@@ -17,51 +23,62 @@ function Assistant() {
                 console.log(err)
             })
     }
+    function inputFileClick() {
+        var imagefile = document.querySelector('#file').click();
+    }
+    function sendMessage() {
+        console.log(props)
+        props.addMessage({sender:"user", message: msgText})
+        console.log(props.messages)
+    }
   return (
     <Container>
 
     
-    <div className="messanger">   
-        <div className="msg-container darker">
-            <img src="C:/Users/pc/Desktop/Работа/LeadersOfDigital/legal-assistant/frontend/src/assets/bot-avatar.png" alt="Avatar" className="right"/>
-            <div className="msg-img right"></div>
-            <p>Привет, я правовой помощник Enterpreneural, помогу вам решить вопросы в области права</p>
-            <span className="time-left">11:01</span>
-            </div>
-        <div className="msg-text">
-               <textarea rows="5"/>
-               <i class="fas fa-paperclip">
-               
-               </i>
-               <form enctype="multipart/form-data" onChange={sendFile}><input type="file" id="file" name="file"/></form>
+    <div className="messanger">
+        <div className="messages-list">
+            {props.messages.map(item => {
+                return  <MessageItem sender={item.sender} text={item.message}/>
+            })}
         </div>
-            {/* <div className="msg-container">
-                <img src="/w3images/bandmember.jpg" alt="Avatar"/>
-                <p>Hello. How are you today?</p>
-                <span className="time-right">11:00</span>
-            </div>
+       
+        <div className="msg-text">
+               <textarea rows="5" value={msgText} onChange={(e) => setMsgText(e.target.value)}/>
+               <Row className="justify-content-between">
+                   <Col md={2}>
+                   <form enctype="multipart/form-data" onChange={sendFile}>
+                    <i className="fas fa-paperclip" onClick={inputFileClick}>
+                        <input type="file" id="file" name="file"/>
+                    </i>
+                        <label >{fileName}</label>
+                </form>
+                   </Col>
+                   <Col md={1}>
+                   <i class="far fa-paper-plane" onClick={sendMessage}></i>
+                   </Col>
+               </Row>
+               
+               
 
-            <div className="msg-container darker">
-            <img src="/w3images/avatar_g2.jpg" alt="Avatar" className="right"/>
-            <p>Hey! I'm fine. Thanks for asking!</p>
-            <span className="time-left">11:01</span>
-            </div>
-
-            <div className="msg-container">
-            <img src="/w3images/bandmember.jpg" alt="Avatar"/>
-            <p>Sweet! So, what do you wanna do today?</p>
-            <span className="time-right">11:02</span>
-            </div>
-
-                <div className="msg-container darker">
-                <img src="/w3images/avatar_g2.jpg" alt="Avatar" className="right"/>
-                <p>Nah, I dunno. Play soccer.. or learn more coding perhaps?</p>
-                <span className="time-left">11:05</span>
-                </div>  */}
+               
+        </div>
         
     </div>
     </Container>
   );
 }
 
-export default Assistant;
+let mapStateToProps = function(state) {
+    return {
+        messages : state.assistantPage.messages,
+    }
+};
+let mapDipatchToProps = dispatch => {
+    return {
+      // dispatching plain actions
+      addMessage: (message) => dispatch({type:"ADD-MESSAGE", data: {message}})
+    }
+  }
+let AssistantStore = connect(mapStateToProps, mapDipatchToProps)(Assistant);
+
+export default AssistantStore;

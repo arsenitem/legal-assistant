@@ -364,7 +364,7 @@ ul {
   list-style: none;
 }
 
-.msg-img {
+img {
   vertical-align: middle;
   height: auto;
  height: 60px;
@@ -395,7 +395,7 @@ ul {
 }
 
 /* Style images */
-.msg-container .msg-img {
+.msg-container img {
   float: left;
   max-width: 60px;
   width: 100%;
@@ -404,7 +404,7 @@ ul {
 }
 
 /* Style the right image */
-.msg-container .msg-img.right {
+.msg-container img.right {
   float: right;
   margin-left: 20px;
   margin-right:0;
@@ -436,4 +436,20 @@ ul {
 }
 .messanger {
   margin-top: 60px;
+}
+.fa-paperclip {
+  font-size: 36px;
+}
+#file {
+  display: none;
+}
+.fa-paper-plane {
+  font-size: 36px;
+}
+.messages-list {
+  height: 400px;
+  max-height: 400px;
+  overflow: scroll;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
