@@ -7,6 +7,8 @@ import Login from './pages/Login';
 import Profile from './pages/Profile'
 import Nav from './components/Nav'
 import Assistant from './pages/Assistant';
+import Changes from './pages/Changes';
+import Start from './pages/Start';
 function App() {
   return (
 
@@ -27,6 +29,12 @@ function App() {
         </Route>
         <Route exact path="/assistant">
           <Assistant/>
+        </Route>
+        <Route exact path="/changes">
+          <Changes/>
+        </Route>
+        <Route exact path="/start">
+          <Start/>
         </Route>
      </Switch>
       </div>

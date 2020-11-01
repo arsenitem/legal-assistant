@@ -11,7 +11,7 @@ function Header() {
                     </h3>
                     </ul> */}
                 <div>
-                    Регистрация
+                    ИП Темник А.Д
                 </div>
             </nav>
       </div>

@@ -40,8 +40,12 @@ function Assistant(props) {
             {props.messages.map(item => {
                 return  <MessageItem sender={item.sender} text={item.message}/>
             })}
+            <MessageItem sender="me" text="Мне отказали в осуществлении государственного кадастрового учета"/>
+            <MessageItem sender="bot" text="У вас есть выписка из росеестра?"/>
+            <MessageItem sender="me" text="Да"/>
+            <MessageItem sender="bot" text="Пожалуйста прикрепите файл"/>
         </div>
-       
+        
         <div className="msg-text">
                <textarea rows="5" value={msgText} onChange={(e) => setMsgText(e.target.value)}/>
                <Row className="justify-content-between">

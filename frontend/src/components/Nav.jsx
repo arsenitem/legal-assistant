@@ -19,9 +19,10 @@ function Nav() {
         <li><Link to="/profile" className="nav-link">Профиль</Link></li>
         <li><Link to="/assistant" className="nav-link">Интерактивный помощник</Link></li>
         <li><Link to="/profile" className="nav-link">База знаний</Link></li>
-        <li><Link to="/profile" className="nav-link">Изменения в законодательстве</Link></li>
+        <li><Link to="/changes" className="nav-link">Изменения в законодательстве</Link></li>
         <li><Link to="/profile" className="nav-link">Полезные советы</Link></li>
         <li><Link to="/profile" className="nav-link">Контакты</Link></li>
+        <li><Link to="/start" className="nav-link">Стать ИП</Link></li>
         <li className="small"><a href="#0">Facebook</a><a href="#0">Instagram</a></li>
       </ul>
     </div>

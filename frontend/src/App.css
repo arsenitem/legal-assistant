@@ -447,9 +447,38 @@ img {
   font-size: 36px;
 }
 .messages-list {
-  height: 400px;
-  max-height: 400px;
+  height: 500px;
+  max-height: 500px;
   overflow: scroll;
   overflow-x: hidden;
   overflow-y: auto;
+}
+.article-tile {
+  background: #f8f8f8;
+  padding: 40px 40px 48px;
+  margin: 22px 0;
+}
+.article {
+  font-size: 17px;
+  line-height: 1.65;
+}
+.article p {
+  margin: 1.5em 0;
+}
+small {
+  font-size: 80%;
+}
+.article-tile > :last-child {
+  margin-bottom: 0;
+}
+.article-tile h2 {
+  font-size: 24px;
+  margin: 0.67em 0;
+      margin-top: 0.67em;
+}
+.ip-list {
+  margin-top: 30px;
+}
+.ip-list li {
+  margin-top: 30px;
 }
